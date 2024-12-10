@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  HttpCode,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -19,14 +17,13 @@ export class PokemonService {
     private readonly pokemonModel: Model<Pokemon>,
   ) {}
 
-  @HttpCode(HttpStatus.CREATED)
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLowerCase();
     try {
       const pokemon = await this.pokemonModel.create(createPokemonDto);
       return pokemon;
     } catch (error: mongo.MongoServerError | unknown) {
-      this.handleExceptions(error, "create")
+      this.handleExceptions(error, 'create');
     }
   }
 
@@ -62,15 +59,22 @@ export class PokemonService {
       await pokemon.save();
       return pokemon;
     } catch (error) {
-      this.handleExceptions(error, "update")
+      this.handleExceptions(error, 'update');
     }
   }
 
-  remove(term: string) {
-    return `This action removes a #${term} pokemon`;
+  async remove(id: string) {
+    // const pokemon = await this.findOne(id);
+    // await pokemon.deleteOne();
+
+    // await this.pokemonModel.findByIdAndDelete(id);
+
+    const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id })
+    if(deletedCount === 0)
+      throw new BadRequestException(`Pokemon with id "${id} not found`)
   }
 
-  private handleExceptions(error: any, verb: "create" | "update") {
+  private handleExceptions(error: any, verb: 'create' | 'update') {
     if (error instanceof mongo.MongoServerError && error.code === 11000) {
       throw new BadRequestException(
         `Pokemon already exists in the database: ${JSON.stringify(error.keyValue)}`,
