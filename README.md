@@ -27,9 +27,19 @@ yarn start:dev
 ```
 http://localhost:3000/api/v2/seed
 ```
-> Se acepta una Query 'limit' opcional para implantar una cantidad 'x' de datos
+> Se acepta una Query number 'insert' opcional para implantar una cantidad 'x' de datos
 
+# Production Build
+1. Crear el archivo ```.env.production.local```
+2. Llenar las variables de entorno de prod
+3. Crear la nueva imagen con el comando:
+```
+docker compose -f docker-compose.prod.yaml --env-file .env.production.local up --build -d
+```
 
 ## Stack
-* MongoDB
 * Nest
+* MongoDB
+* Mongoose
+* Joi
+* Docker
