@@ -1,5 +1,6 @@
 
 services:
+
   db:
     image: mongo:7.0
     restart: always
